@@ -52,30 +52,31 @@
   "Syntax table for hfst-mode")
 
 (defconst hfst-font-lock-keywords
-  (list
-   ;; escaped characters
-   (list "\\(\\\\->\\)\\|\\(\\\\.\\)"
-         (list 1 'font-lock-function-name-face nil t)
-         (list 2 'font-lock-unfontify-region-function nil t))
-   ;; keywords
-   (list "\\(\\<ALPHABET\\>\\)"
-         (list 1 'font-lock-keyword-face nil t))
-   ;; include operator
-   (list "\\(?:\\(#include\\)[ \t]+\\)?\\(\"<?.+?>?\"\\)"
-         (list 1 'font-lock-keyword-face nil t)
-         (list 2 'font-lock-constant-face nil t))
-   ;; (symbol) variables
-   (list "\\(\\([$#]\\)=?\\(?:\\\\\\$\\|\\\\\\#\\|[^ \n\t]\\)+?\\2\\)"
-         (list 1 'font-lock-variable-name-face nil t))
-   ;; operators (must of high precedence because of <=> is an op not a multi-character symbols)
-;;    (list "\\(!\\)"
-;;          (list 1 font-lock-negation-char-face nil t))
-   (list "\\([_/\\\\^]->\\|[\\^_]?\\(?:<=>?\\|<?=>\\)\\|[:|&!?*+^_]\\|^_\\|||\\|<<\\|__\\)"
-         (list 1 'font-lock-function-name-face nil t))
-   ;; multi-character symbols
-   (list "\\(<.*?>\\)"
-         (list 1 'font-lock-type-face nil t))
-   )
+  '(
+    ;; escaped characters
+    ("\\(\\\\->\\)\\|\\(\\\\.\\)"
+     (1 'font-lock-function-name-face nil t)
+     (2 'font-lock-unfontify-region-function nil t))
+    ;; keywords
+    ("\\(\\<ALPHABET\\>\\|Multichar_Symbols\\)"
+     (1 'font-lock-keyword-face nil t))
+    ("\\(LEXICON\\) +\\(\\(\\sw\\|\\s_\\)+\\)"
+     (1 'font-lock-keyword-face nil t)
+     (2 font-lock-variable-name-face))
+    ;; include operator
+    ("\\(?:\\(#include\\)[ \t]+\\)?\\(\"<?.+?>?\"\\)"
+     (1 'font-lock-keyword-face nil t)
+     (2 'font-lock-constant-face nil t))
+    ;; (symbol) variables
+    ("\\(\\([$#]\\)=?\\(?:\\\\\\$\\|\\\\\\#\\|[^ \n\t]\\)+?\\2\\)"
+     (1 'font-lock-variable-name-face nil t))
+    ;; operators
+    ("\\([_/\\\\^]->\\|[\\^_]?\\(?:<=>?\\|<?=>\\)\\|[:|&!?*+^_]\\|^_\\|||\\|<<\\|__\\)"
+     (1 'font-lock-function-name-face nil t))
+    ;; multi-character symbols
+    ("\\(<.*?>\\)"
+     (1 'font-lock-type-face nil t))
+    )
   "Expressions to highlight in hfst-mode.")
 
 (defun hfst-font ()
