@@ -20,12 +20,14 @@
 ;; along with this program; if not, write to the Free Software
 ;; Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+(defconst hfst-version "2010-01-04" "Version of hfst-mode")
 
-(provide 'hfst)
+;;;============================================================================
+;;;
+;;; Define the formal stuff for a major mode named hfst.
+;;;
 
 (defvar hfst-mode-hook nil)
-
-(defconst hfst-version "0.01" "Version of hfst-mode")
 
 (defvar hfst-mode-syntax-table
   (let ((hfst-mode-syntax-table (make-syntax-table)))
@@ -48,7 +50,6 @@
     (modify-syntax-entry ?] ")[" hfst-mode-syntax-table)
     hfst-mode-syntax-table)
   "Syntax table for hfst-mode")
-
 
 (defconst hfst-font-lock-keywords
   (list
@@ -85,7 +86,6 @@
   (make-local-variable 'font-lock-defaults)
   (setq font-lock-defaults '(hfst-font-lock-keywords nil nil)))
 
-
 (defun hfst-mode ()
   "Major mode for editing files describing finite state
 transducers to be used with hfst, Helsinki Finite State
@@ -111,6 +111,11 @@ http://www.ling.helsinki.fi/kieliteknologia/tutkimus/hfst/."
   (hfst-font)
   (run-hooks 'hfst-mode-hook))
 
+;;; Run hooks -----------------------------------------------------------------
+(run-hooks 'hfst-load-hook)
 
+(provide 'hfst)
 
+;;;============================================================================
 
+;;; hfst.el ends here
