@@ -56,8 +56,8 @@
   "Syntax table for hfst-mode")
 
 (defconst hfst-font-lock-keywords
-  '(;; keywords
-    ("\\Sw\\(Alphabet\\|Multichar_Symbols\\|Sets\\|Definitions\\|Diacritics\\|Rule-variables\\|where\\|in\\|matched\\)\\Sw"
+  '(;; keywords TODO: alphabet doesn't match if on first line!
+    ("\\(?:\\Sw\\|^\\)\\(Alphabet\\|Multichar_Symbols\\|Sets\\|Rules\\|Definitions\\|Diacritics\\|Rule-variables\\|where\\|in\\|matched\\)\\Sw"
      (1 'font-lock-keyword-face nil t))
     ;; todo: lexicon names always start with a capital letter, but can
     ;; you have eg. Æ? or just A-Z?
