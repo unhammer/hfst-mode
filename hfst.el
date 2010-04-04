@@ -20,7 +20,7 @@
 ;; along with this program; if not, write to the Free Software
 ;; Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-(defconst hfst-version "2010-01-11" "Version of hfst-mode")
+(defconst hfst-version "2010-04-04" "Version of hfst-mode")
 
 ;;;============================================================================
 ;;;
@@ -28,6 +28,9 @@
 ;;;
 
 (defvar hfst-mode-hook nil)
+
+(defvar hfst-mode-map (make-sparse-keymap)
+  "Keymap for hfst minor mode.")
 
 (defvar hfst-mode-syntax-table
   (let ((hfst-mode-syntax-table (make-syntax-table)))
@@ -39,6 +42,8 @@
     (modify-syntax-entry ?% "\\" hfst-mode-syntax-table)
     ;; dots appear as symbols in flag diacritics:
     (modify-syntax-entry ?. "_" hfst-mode-syntax-table)
+    (modify-syntax-entry ?« "_" hfst-mode-syntax-table)
+    (modify-syntax-entry ?» "_" hfst-mode-syntax-table) 
 ;;     (modify-syntax-entry ?\" "." hfst-mode-syntax-table)
 ;;     (modify-syntax-entry ?\\ "\\" hfst-mode-syntax-table)
 ;;    (modify-syntax-entry ?\" "." hfst-mode-syntax-table)
@@ -96,9 +101,9 @@ Transducer Tools, see
 http://www.ling.helsinki.fi/kieliteknologia/tutkimus/hfst/."
   (interactive)
   (kill-all-local-variables)
-;;  (use-local-map hfst-mode-map)
-  (setq major-mode 'hfst-mode)
-  (setq mode-name "HFST")
+  (setq major-mode 'hfst-mode
+	mode-name "HFST")
+  (use-local-map hfst-mode-map)
   (setq parse-sexp-ignore-comments t)
   (set-syntax-table hfst-mode-syntax-table)
 ;;   (make-local-variable 'indent-line-function)
@@ -113,6 +118,35 @@ http://www.ling.helsinki.fi/kieliteknologia/tutkimus/hfst/."
   (setq completion-ignore-case nil)
   (hfst-font)
   (run-mode-hooks 'hfst-mode-hook))
+
+;;; Interactive functions -----------------------------------------------------
+
+(defun hfst-lexref-at-point ()
+  "The lexicon referenced to by this entry."
+  (let ((start (save-excursion
+		 (re-search-backward "[^%];\\|LEXICON \\S *")
+		 (match-end 0)))
+	(end (save-excursion (re-search-forward "[^%];"))))
+    (save-excursion
+      (goto-char start)
+      (re-search-forward "\\s \\(\\S +\\)\\s *;")
+      (match-string-no-properties 1))))
+
+(defun hfst-goto-lexicon ()
+  "Call from an entry to go to its pardef. Mark is pushed so you
+can go back with C-u \\[set-mark-command]."
+  (interactive)
+  (let ((lexname (hfst-lexref-at-point))
+	pos)
+    (if (save-excursion
+	  (goto-char (point-min))
+	  (if (re-search-forward (concat "LEXICON " lexname "\\s *$") nil 'noerror)
+	      (setq pos (match-beginning 0))))
+	(progn (push-mark)
+	       (goto-char pos)))))
+
+;;; Keybindings --------------------------------------------------------------
+(define-key hfst-mode-map (kbd "C-c G") 'hfst-goto-lexicon)
 
 ;;; Run hooks -----------------------------------------------------------------
 (run-hooks 'hfst-load-hook)
