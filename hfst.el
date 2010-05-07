@@ -81,7 +81,7 @@
      (2 'font-lock-unfontify-region-function nil t))
     ;; operators:
     ;; todo: is the + just another symbol?
-    ("\\(\\(?:<=>?\\|<?=>\\)\\|[:+^>|-/;_]\\)"
+    ("\\(\\(?:<=>?\\|<?=>\\|/<=\\)\\|[:+^>|-/;_]\\)"
     ; [_/\\\\^]->\\|[\\^_]?\\|^_\\|||\\|<<\\|__
      (1 'font-lock-function-name-face nil t)))
   "Expressions to highlight in hfst-mode.")
@@ -140,10 +140,11 @@ can go back with C-u \\[set-mark-command]."
 	pos)
     (if (save-excursion
 	  (goto-char (point-min))
-	  (if (re-search-forward (concat "LEXICON " lexname "\\s *$") nil 'noerror)
+	  (if (re-search-forward (concat "LEXICON " lexname "\\s *\\($\\|!\\)") nil 'noerror)
 	      (setq pos (match-beginning 0))))
 	(progn (push-mark)
-	       (goto-char pos)))))
+	       (goto-char pos))
+      (message "Couldn't find LEXICON %s" lexname))))
 
 ;;; Keybindings --------------------------------------------------------------
 (define-key hfst-mode-map (kbd "C-c G") 'hfst-goto-lexicon)
