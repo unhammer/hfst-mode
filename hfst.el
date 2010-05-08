@@ -61,8 +61,12 @@
   "Syntax table for hfst-mode")
 
 (defconst hfst-font-lock-keywords
-  '(;; keywords TODO: alphabet doesn't match if on first line!
-    ("\\(?:\\Sw\\|^\\)\\(Alphabet\\|Multichar_Symbols\\|Sets\\|Rules\\|Definitions\\|Diacritics\\|Rule-variables\\|where\\|in\\|matched\\)\\Sw"
+  `(;; keywords TODO: alphabet doesn't match if on first line!
+    (,(concat "\\(?:\\Sw\\|^\\)"
+	      (regexp-opt '("Alphabet" "Multichar_Symbols" "Sets" "Rules" "Definitions"
+			    "Diacritics" "Rule-variables" "where" "in" "matched")
+			  'group)
+	      "\\Sw")
      (1 'font-lock-keyword-face nil t))
     ;; todo: lexicon names always start with a capital letter, but can
     ;; you have eg. Æ? or just A-Z?
@@ -73,16 +77,16 @@
     ("@\\sw\\.\\(\\(\\sw\\|\\s_\\)+\\)@" 
      (1 'font-lock-variable-name-face nil t))
     ;; End symbol:
-    ("\\(#\\)"
-     (1 'font-lock-warning-face nil t))
+    ("\\(^\\|[^%]\\)\\(#\\)"
+     (2 'font-lock-warning-face nil t))
     ;; escape symbol:
-    ("\\(%\\)\\([^ \t\n]+\\)"
-     (1 'font-lock-warning-face nil t)
-     (2 'font-lock-unfontify-region-function nil t))
+    ("\\(%[^ \t\n]\\)"
+     (1 'font-lock-warning-face nil t))
     ;; operators:
-    ;; todo: is the + just another symbol?
-    ("\\(\\(?:<=>?\\|<?=>\\|/<=\\)\\|[:+^>|-/;_]\\)"
-    ; [_/\\\\^]->\\|[\\^_]?\\|^_\\|||\\|<<\\|__
+    (,(regexp-opt '("<=>" "<=" "=>" "/<=" "_" ";"
+		    "=" ":" ">"
+		    "\\" "~" "+" "?" "*" "-" "^")
+		  'group)
      (1 'font-lock-function-name-face nil t)))
   "Expressions to highlight in hfst-mode.")
 
