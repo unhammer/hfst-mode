@@ -144,7 +144,7 @@ can go back with C-u \\[set-mark-command]."
 	pos)
     (if (save-excursion
 	  (goto-char (point-min))
-	  (if (re-search-forward (concat "LEXICON " lexname "\\s *\\($\\|!\\)") nil 'noerror)
+	  (if (re-search-forward (concat "^\\s *LEXICON " lexname "\\s *\\($\\|!\\)") nil 'noerror)
 	      (setq pos (match-beginning 0))))
 	(progn (push-mark)
 	       (goto-char pos))
