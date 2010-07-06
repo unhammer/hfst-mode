@@ -20,6 +20,12 @@
 ;; along with this program; if not, write to the Free Software
 ;; Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+;;; TODO: 
+;;; - Recognize if we are in a lexc or twolc (or xfst) file,
+;;;   and apply specific minor mode
+;;; - Recognize END keyword in lexc files and comment all that is
+;;;   below it
+
 (defconst hfst-version "2010-04-04" "Version of hfst-mode")
 
 ;;;============================================================================
@@ -64,7 +70,7 @@
   `(;; keywords TODO: alphabet doesn't match if on first line!
     (,(concat "\\(?:\\Sw\\|^\\)"
 	      (regexp-opt '("Alphabet" "Multichar_Symbols" "Sets" "Rules" "Definitions"
-			    "Diacritics" "Rule-variables" "where" "in" "matched")
+			    "Diacritics" "Rule-variables" "where" "in" "matched" "END")
 			  'group)
 	      "\\Sw")
      (1 'font-lock-keyword-face nil t))
