@@ -25,6 +25,7 @@
 ;;;   and apply specific minor mode
 ;;; - Recognize END keyword in lexc files and comment all that is
 ;;;   below it
+;;; - Compile list of lexicon names for quick go-to?
 
 (defconst hfst-version "2010-04-04" "Version of hfst-mode")
 
@@ -76,7 +77,7 @@
      (1 'font-lock-keyword-face nil t))
     ;; todo: lexicon names always start with a capital letter, but can
     ;; you have eg. Æ? or just A-Z?
-    ("\\(LEXICON\\) +\\(\\(\\sw\\|\\s_\\)+\\)"
+    ("\\(LEXICON\\) +\\(\\(\\sw\\|\\s_\\)+\\)" ; Root is special, note it in any way?
      (1 'font-lock-keyword-face nil t)
      (2 font-lock-variable-name-face))
     ;; flag diacritics:
