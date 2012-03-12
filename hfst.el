@@ -87,7 +87,7 @@
     ("\\(^\\|[^%]\\)\\(#\\)"
      (2 'font-lock-warning-face nil t))
     ;; escape symbol:
-    ("\\(%[^ \t\n]\\)"
+    ("\\(%.\\)"
      (1 'font-lock-warning-face nil t))
     ;; operators:
     (,(regexp-opt '("<=>" "<=" "=>" "/<=" "_" ";"
