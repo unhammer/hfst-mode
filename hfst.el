@@ -67,6 +67,16 @@
     hfst-mode-syntax-table)
   "Syntax table for hfst-mode")
 
+(defface hfst-font-lock-escaped-face
+  '((((class color) (min-colors 88) (background light)) (:background "Pink" :weight bold))
+    (((class color) (min-colors 88) (background dark)) (:background "Red1" :weight bold))
+    (((class color) (min-colors 16) (background light)) (:background "Pink" :weight bold))
+    (((class color) (min-colors 16) (background dark)) (:background "Red1" :weight bold))
+    (((class color) (min-colors 8)) (:background "red"))
+    (t (:inverse-video t :weight bold)))
+  "Font Lock mode face used to escaped characters (using background colour since we may have spaces)."
+  :group 'font-lock-faces)
+
 (defconst hfst-font-lock-keywords
   `(;; keywords TODO: alphabet doesn't match if on first line!
     (,(concat "\\(?:\\Sw\\|^\\)"
@@ -87,8 +97,7 @@
     ("\\(^\\|[^%]\\)\\(#\\)"
      (2 'font-lock-warning-face nil t))
     ;; escape symbol:
-    ("\\(%.\\)"
-     (1 'font-lock-warning-face nil t))
+    ("%." 0 'hfst-font-lock-escaped-face nil t)
     ;; operators:
     (,(regexp-opt '("<=>" "<=" "=>" "/<=" "_" ";"
 		    "=" ":" ">"
