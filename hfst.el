@@ -26,6 +26,7 @@
 ;;; - Recognize END keyword in lexc files and comment all that is
 ;;;   below it
 ;;; - Compile list of lexicon names for quick go-to?
+;;; - A feature like dix.el's dix-xmlise-using-above-elt
 
 (defconst hfst-version "2010-04-04" "Version of hfst-mode")
 
