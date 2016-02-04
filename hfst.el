@@ -1,7 +1,7 @@
 ;;; hfst-mode.el -- major mode for editing HFST files
 
 ;; Copyright (C) 2010-2016 Kevin Brubeck Unhammer
-;; Based on sfst.el Copyright (C) 2006 Sebastian Nagel
+;; Copyright (C) 2006 Sebastian Nagel (sfst.el used as basis)
 
 ;; Author: Kevin Brubeck Unhammer <unhammer@fsfe.org>
 ;; Version: 0.2.0
@@ -25,6 +25,9 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+
+;; Provides syntax highlighting and a "go to lexicon"-function useful
+;; for editing Helsinki Finite State Transducer descriptions.
 
 ;; Usage:
 ;; (add-to-list 'load-path "/path/to/hfst-mode-folder")
