@@ -14,5 +14,6 @@ Usage:
     (autoload 'hfst-mode "~/path/to/hfst-mode/hfst.el")
     ; Change these lines if you name your files something other
     ; than .twol and .lexc:
-    (add-to-list 'auto-mode-alist '("\\.twol$" . hfst-mode))
-    (add-to-list 'auto-mode-alist '("\\.lexc$" . hfst-mode))
+    (add-to-list 'auto-mode-alist '("\\.twol\\'" . hfst-mode))
+    (add-to-list 'auto-mode-alist '("\\.xfst\\'" . hfst-mode))
+    (add-to-list 'auto-mode-alist '("\\.lexc\\'" . hfst-mode))
