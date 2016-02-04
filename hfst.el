@@ -1,4 +1,4 @@
-;;; hfst-mode.el -- major mode for editing HFST files
+;;; hfst.el -- major mode for editing HFST files
 
 ;; Copyright (C) 2010-2016 Kevin Brubeck Unhammer
 ;; Copyright (C) 2006 Sebastian Nagel (sfst.el used as basis)
