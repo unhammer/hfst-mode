@@ -1,34 +1,53 @@
-; hfst-mode.el -- major mode for editing HFST files
+;;; hfst-mode.el -- major mode for editing HFST files
 
-; For Helsinki Finite State Transducer Tools (HFST), see
-; http://www.ling.helsinki.fi/kieliteknologia/tutkimus/hfst/
+;; Copyright (C) 2010-2016 Kevin Brubeck Unhammer
+;; Based on sfst.el Copyright (C) 2006 Sebastian Nagel
 
-;; Copyright (C) 2010 Kevin Brubeck Unhammer
-;; Based on sfst.el Copyright (C) 2006 Sebastian Nagel 
+;; Author: Kevin Brubeck Unhammer <unhammer@fsfe.org>
+;; Version: 0.2.0
+;; Url: http://wiki.apertium.org/wiki/Emacs
+;; Keywords: languages
+
+;; This file is not part of GNU Emacs.
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation; either version 2, or (at your option)
 ;; any later version.
-;; 
+;;
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
-;; 
+;;
 ;; You should have received a copy of the GNU General Public License
-;; along with this program; if not, write to the Free Software
-;; Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-;;; TODO: 
+;;; Commentary:
+
+;; Usage:
+;; (add-to-list 'load-path "/path/to/hfst-mode-folder")
+;; (autoload 'hfst-mode "~/path/to/hfst-mode/hfst.el")
+;; ; Change these lines if you name your files something other
+;; ; than .twol and .lexc:
+;; (add-to-list 'auto-mode-alist '("\\.twol$" . hfst-mode))
+;; (add-to-list 'auto-mode-alist '("\\.lexc$" . hfst-mode))
+
+;; For information about Helsinki Finite State Transducer Tools
+;; (HFST), see http://hfst.github.io/"
+
+;;; TODO:
 ;;; - Recognize if we are in a lexc or twolc (or xfst) file,
-;;;   and apply specific minor mode
+;;;   and apply specific keywords etc.
 ;;; - Recognize END keyword in lexc files and comment all that is
 ;;;   below it
 ;;; - Compile list of lexicon names for quick go-to?
 ;;; - A feature like dix.el's dix-xmlise-using-above-elt
+;;; - Use define-derived-mode instead of this old-school stuff
 
-(defconst hfst-version "2010-04-04" "Version of hfst-mode")
+;;; Code:
+
+(defconst hfst-version "0.2.0" "Version of hfst-mode.")
 
 ;;;============================================================================
 ;;;
@@ -51,7 +70,7 @@
     ;; dots appear as symbols in flag diacritics:
     (modify-syntax-entry ?. "_" hfst-mode-syntax-table)
     (modify-syntax-entry ?« "_" hfst-mode-syntax-table)
-    (modify-syntax-entry ?» "_" hfst-mode-syntax-table) 
+    (modify-syntax-entry ?» "_" hfst-mode-syntax-table)
 ;;     (modify-syntax-entry ?\" "." hfst-mode-syntax-table)
 ;;     (modify-syntax-entry ?\\ "\\" hfst-mode-syntax-table)
 ;;    (modify-syntax-entry ?\" "." hfst-mode-syntax-table)
@@ -66,7 +85,7 @@
 ;;     (modify-syntax-entry ?[ "(]" hfst-mode-syntax-table)
 ;;     (modify-syntax-entry ?] ")[" hfst-mode-syntax-table)
     hfst-mode-syntax-table)
-  "Syntax table for hfst-mode")
+  "Syntax table for hfst-mode.")
 
 (defface hfst-font-lock-escaped-face
   '((((class color) (min-colors 88) (background light)) (:background "Pink" :weight bold))
@@ -92,7 +111,7 @@
      (1 'font-lock-keyword-face nil t)
      (2 font-lock-variable-name-face))
     ;; flag diacritics:
-    ("@\\sw\\.\\(\\(\\sw\\|\\s_\\)+\\)@" 
+    ("@\\sw\\.\\(\\(\\sw\\|\\s_\\)+\\)@"
      (1 'font-lock-variable-name-face nil t))
     ;; End symbol:
     ("\\(^\\|[^%]\\)\\(#\\)"
@@ -116,10 +135,10 @@
   (setq font-lock-defaults '(hfst-font-lock-keywords nil nil)))
 
 (defun hfst-mode ()
-  "Major mode for editing files describing finite state
-transducers to be used with hfst, Helsinki Finite State
-Transducer Tools, see
-http://www.ling.helsinki.fi/kieliteknologia/tutkimus/hfst/."
+  "Major mode for editing Helsinki Finite State Transducer files.
+Supported formats include .lexc and .twolc.
+For more information on Helsinki Finite State Transducer Tools, see
+http://hfst.github.io/"
   (interactive)
   (kill-all-local-variables)
   (setq major-mode 'hfst-mode
@@ -129,7 +148,7 @@ http://www.ling.helsinki.fi/kieliteknologia/tutkimus/hfst/."
   (set-syntax-table hfst-mode-syntax-table)
 ;;   (make-local-variable 'indent-line-function)
 ;;   (setq indent-line-function 'hfst-indent-line)
-  (make-local-variable 'comment-start)  
+  (make-local-variable 'comment-start)
   (setq comment-start "! ")
   (make-local-variable 'comment-end)
   (setq comment-end "")
@@ -154,8 +173,9 @@ http://www.ling.helsinki.fi/kieliteknologia/tutkimus/hfst/."
       (match-string-no-properties 1))))
 
 (defun hfst-goto-lexicon ()
-  "Call from an entry to go to its pardef. Mark is pushed so you
-can go back with C-u \\[set-mark-command]."
+  "Go to the lexicon defined at point/line.
+Call from an entry to go to its pardef. Mark is pushed so you can
+go back with \\[universal-argument] \\[set-mark-command]."
   (interactive)
   (let ((lexname (hfst-lexref-at-point))
 	pos)
