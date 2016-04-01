@@ -138,6 +138,7 @@
   (make-local-variable 'font-lock-defaults)
   (setq font-lock-defaults '(hfst-font-lock-keywords nil nil)))
 
+;;;###autoload
 (defun hfst-mode ()
   "Major mode for editing Helsinki Finite State Transducer files.
 Supported formats include .lexc and .twolc.
