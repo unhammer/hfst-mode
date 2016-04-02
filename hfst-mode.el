@@ -193,7 +193,8 @@ go back with \\[universal-argument] \\[set-mark-command]."
       (message "Couldn't find LEXICON %s" lexname))))
 
 ;;; Keybindings --------------------------------------------------------------
-(define-key hfst-mode-map (kbd "C-c G") 'hfst-mode-goto-lexicon)
+(define-key hfst-mode-map (kbd "M-.") #'hfst-mode-goto-lexicon)
+(define-key hfst-mode-map (kbd "M-,") #'pop-to-mark-command)
 
 ;;; Run hooks -----------------------------------------------------------------
 (run-hooks 'hfst-mode-load-hook)
