@@ -4,7 +4,7 @@
 ;; Copyright (C) 2006 Sebastian Nagel (sfst.el used as basis)
 
 ;; Author: Kevin Brubeck Unhammer <unhammer@fsfe.org>
-;; Version: 0.2.0
+;; Version: 0.3.0
 ;; Package-Requires:
 ;; Url: http://wiki.apertium.org/wiki/Emacs
 ;; Keywords: languages
@@ -51,7 +51,7 @@
 
 ;;; Code:
 
-(defconst hfst-mode-version "0.2.0" "Version of hfst-mode.")
+(defconst hfst-mode-version "0.3.0" "Version of hfst-mode.")
 
 ;;;============================================================================
 ;;;
