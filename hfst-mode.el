@@ -179,14 +179,15 @@ http://hfst.github.io/"
 
 (defun hfst-mode-goto-lexicon ()
   "Go to the lexicon defined at point/line.
-Call from an entry to go to its pardef. Mark is pushed so you can
+Call from an entry to go to its pardef.  Mark is pushed so you can
 go back with \\[universal-argument] \\[set-mark-command]."
   (interactive)
   (let ((lexname (hfst-mode-lexref-at-point))
 	pos)
     (if (save-excursion
 	  (goto-char (point-min))
-	  (if (re-search-forward (concat "^\\s *LEXICON " lexname "\\s *\\($\\|!\\)") nil 'noerror)
+	  (if (re-search-forward (concat "^\\s *LEXICON " lexname "\\s *\\($\\|!\\)")
+                                 nil 'noerror)
 	      (setq pos (match-beginning 0))))
 	(progn (push-mark)
 	       (goto-char pos))
