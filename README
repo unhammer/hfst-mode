@@ -6,12 +6,12 @@ Tools.
 
 hfst-mode provides syntax highlighting for the twolc and lexc formats.
 There is so far just one keyboard shortcut, `C-c G`, or
-`hfst-goto-lexicon`, which moves you to the definition of the
+`hfst-mode-goto-lexicon`, which moves you to the definition of the
 continuation lexicon referenced by the current entry.
 
 Usage:
 
-    (autoload 'hfst-mode "~/path/to/hfst-mode/hfst.el")
+    (autoload 'hfst-mode "~/path/to/hfst-mode/hfst-mode.el")
     ; Change these lines if you name your files something other
     ; than .twol and .lexc:
     (add-to-list 'auto-mode-alist '("\\.twol\\'" . hfst-mode))

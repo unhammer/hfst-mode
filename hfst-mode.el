@@ -1,4 +1,4 @@
-;;; hfst.el --- major mode for editing HFST files
+;;; hfst-mode.el --- major mode for editing HFST files
 
 ;; Copyright (C) 2010-2016 Kevin Brubeck Unhammer
 ;; Copyright (C) 2006 Sebastian Nagel (sfst.el used as basis)
@@ -51,7 +51,7 @@
 
 ;;; Code:
 
-(defconst hfst-version "0.2.0" "Version of hfst-mode.")
+(defconst hfst-mode-version "0.2.0" "Version of hfst-mode.")
 
 ;;;============================================================================
 ;;;
@@ -91,7 +91,7 @@
     hfst-mode-syntax-table)
   "Syntax table for hfst-mode.")
 
-(defface hfst-font-lock-escaped-face
+(defface hfst-mode-font-lock-escaped-face
   '((((class color) (min-colors 88) (background light)) (:background "Pink" :weight bold))
     (((class color) (min-colors 88) (background dark)) (:background "Red1" :weight bold))
     (((class color) (min-colors 16) (background light)) (:background "Pink" :weight bold))
@@ -101,7 +101,7 @@
   "Font Lock mode face used to escaped characters (using background colour since we may have spaces)."
   :group 'font-lock-faces)
 
-(defconst hfst-font-lock-keywords
+(defconst hfst-mode-font-lock-keywords
   `(;; keywords TODO: alphabet doesn't match if on first line!
     (,(concat "\\(?:\\Sw\\|^\\)"
 	      (regexp-opt '("Alphabet" "Multichar_Symbols" "Sets" "Rules" "Definitions"
@@ -121,7 +121,7 @@
     ("\\(^\\|[^%]\\)\\(#\\)"
      (2 'font-lock-warning-face nil t))
     ;; escape symbol:
-    ("%." 0 'hfst-font-lock-escaped-face nil t)
+    ("%." 0 'hfst-mode-font-lock-escaped-face nil t)
     ;; operators:
     (,(regexp-opt '("<=>" "<=" "=>" "/<=" "_" ";"
 		    "=" ":" ">"
@@ -130,13 +130,13 @@
      (1 'font-lock-function-name-face nil t)))
   "Expressions to highlight in hfst-mode.")
 
-(defun hfst-font ()
+(defun hfst-mode-font ()
   "Set font-lock variables for hfst mode."
   (make-local-variable 'font-lock-keywords-case-fold-search) ; For GNU Emacs.
   (setq font-lock-keywords-case-fold-search nil)
   (put major-mode 'font-lock-keywords-case-fold-search nil) ; For XEmacs.
   (make-local-variable 'font-lock-defaults)
-  (setq font-lock-defaults '(hfst-font-lock-keywords nil nil)))
+  (setq font-lock-defaults '(hfst-mode-font-lock-keywords nil nil)))
 
 ;;;###autoload
 (defun hfst-mode ()
@@ -151,8 +151,8 @@ http://hfst.github.io/"
   (use-local-map hfst-mode-map)
   (setq parse-sexp-ignore-comments t)
   (set-syntax-table hfst-mode-syntax-table)
-;;   (make-local-variable 'indent-line-function)
-;;   (setq indent-line-function 'hfst-indent-line)
+  ;;   (make-local-variable 'indent-line-function)
+  ;;   (setq indent-line-function 'hfst-mode-indent-line)
   (make-local-variable 'comment-start)
   (setq comment-start "! ")
   (make-local-variable 'comment-end)
@@ -161,12 +161,12 @@ http://hfst.github.io/"
   (setq comment-start-skip "! *")
   (make-local-variable 'completion-ignore-case)
   (setq completion-ignore-case nil)
-  (hfst-font)
+  (hfst-mode-font)
   (run-mode-hooks 'hfst-mode-hook))
 
 ;;; Interactive functions -----------------------------------------------------
 
-(defun hfst-lexref-at-point ()
+(defun hfst-mode-lexref-at-point ()
   "The lexicon referenced to by this entry."
   (let ((start (save-excursion
 		 (re-search-backward "[^%];\\|LEXICON \\S *")
@@ -177,12 +177,12 @@ http://hfst.github.io/"
       (re-search-forward "\\s \\(\\S +\\)\\s *;")
       (match-string-no-properties 1))))
 
-(defun hfst-goto-lexicon ()
+(defun hfst-mode-goto-lexicon ()
   "Go to the lexicon defined at point/line.
 Call from an entry to go to its pardef. Mark is pushed so you can
 go back with \\[universal-argument] \\[set-mark-command]."
   (interactive)
-  (let ((lexname (hfst-lexref-at-point))
+  (let ((lexname (hfst-mode-lexref-at-point))
 	pos)
     (if (save-excursion
 	  (goto-char (point-min))
@@ -193,13 +193,13 @@ go back with \\[universal-argument] \\[set-mark-command]."
       (message "Couldn't find LEXICON %s" lexname))))
 
 ;;; Keybindings --------------------------------------------------------------
-(define-key hfst-mode-map (kbd "C-c G") 'hfst-goto-lexicon)
+(define-key hfst-mode-map (kbd "C-c G") 'hfst-mode-goto-lexicon)
 
 ;;; Run hooks -----------------------------------------------------------------
-(run-hooks 'hfst-load-hook)
+(run-hooks 'hfst-mode-load-hook)
 
-(provide 'hfst)
+(provide 'hfst-mode)
 
 ;;;============================================================================
 
-;;; hfst.el ends here
+;;; hfst-mode.el ends here
