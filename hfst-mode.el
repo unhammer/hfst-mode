@@ -105,7 +105,10 @@
   `(;; keywords TODO: alphabet doesn't match if on first line!
     (,(concat "\\(?:\\Sw\\|^\\)"
 	      (regexp-opt '("Alphabet" "Multichar_Symbols" "Sets" "Rules" "Definitions"
-			    "Diacritics" "Rule-variables" "where" "in" "matched" "END")
+			    "Diacritics" "Rule-variables" "where" "in" "matched" "END"
+                            ;; pmatch:
+                            "set" "need-separators" "off" "on"
+                            "Define" "regex" "EndTag" "Punct" "Whitespace" "LC" "RC" "@bin")
 			  'group)
 	      "\\Sw")
      (1 'font-lock-keyword-face nil t))
