@@ -196,6 +196,30 @@ go back with \\[universal-argument] \\[set-mark-command]."
 	       (goto-char pos))
       (message "Couldn't find LEXICON %s" lexname))))
 
+(defun hfst-lexc-guess-multichar-symbols ()
+  "Return a list of the multichar symbols of this lexc file."
+  (save-excursion
+    (goto-char (point-min))
+    (let* ((beg (and (re-search-forward "^\\s *Multichar_Symbols\\s *")
+                     (match-end 0)))
+           (end (and beg
+                     (re-search-forward "^\\s *LEXICON\\s ")
+                     (match-beginning 0)))
+           (raw (string-to-list (buffer-substring-no-properties beg end)))
+           inquot
+           sym
+           syms)
+      ;; Could just split-string raw, but whitespace can actually be quoted!
+      (dolist (c raw)
+        (cond (inquot (setq inquot nil) (push c sym))
+              ((eq c ?%) (setq inquot t) (push c sym))
+              ;; split-string-default-separators
+              ((memq c '(32 12 9 10 13 11)) (when sym
+                                              (push (concat (reverse sym)) syms)
+                                              (setq sym nil)))
+              (t (push c sym))))
+        syms)))
+
 ;;; Keybindings --------------------------------------------------------------
 (define-key hfst-mode-map (kbd "M-.") #'hfst-mode-goto-lexicon)
 (define-key hfst-mode-map (kbd "M-,") #'pop-to-mark-command)
