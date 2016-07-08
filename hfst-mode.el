@@ -70,11 +70,24 @@
   :tag "HFST"
   :group 'languages)
 
+;; TODO: should also have a list of parent lexc's for
+;; hfst-mode-goto-lexicon to use when looking up
 (defcustom hfst-mode-root-lexc nil
-  "If your lexc is split into multiple files, you may want to refer to the root."
+  "If your lexc is split into multiple files, you may want to refer to the root.
+This is typically a file-local variable, used by
+`hfst-mode-lexc-guess-multichars'."
   :type '(choice string (const nil))
   :group 'hfst-mode
   :safe #'hfst-mode-safe-root-lexc)
+
+(defcustom hfst-mode-idle-delay 2
+  "How often to run `hfst-mode-idle-timer'.
+The function just creates a regexp from the Multichar_Symbols
+section of `hfst-mode-root-lexc', which typically shouldn't take
+very long."
+  :safe #'integerp
+  :group 'hfst-mode
+  :type 'integer)
 
 (defun hfst-mode-safe-root-lexc (val)
   "Return t if VAL is safe as a file-local variable."
@@ -121,37 +134,42 @@
   "Font Lock mode face used to escaped characters (using background colour since we may have spaces)."
   :group 'font-lock-faces)
 
+(defconst hfst-mode-keywords
+  '("Alphabet" "Multichar_Symbols" "Sets" "Rules" "Definitions"
+    "Diacritics" "Rule-variables" "where" "in" "matched" "END"
+    ;; pmatch:
+    "set" "need-separators" "off" "on"
+    "Define" "regex" "EndTag" "Punct" "Whitespace" "LC" "RC" "@bin")
+  "Set of keywords to give keyword-face in font-lock.")
+
+(defconst hfst-mode-operators ; TODO: check if xfst/lexc/twol only highlight the right ones
+  '("<=>" "<=" "=>" "/<=" "_" ";"
+    "=" ":" ">"
+    "\\" "~" "+" "?" "*" "-" "^")
+  "Set of operators to give function-name-face in font-lock.")
+
 (defconst hfst-mode-font-lock-keywords
   `((hfst-mode-next-lexc-multichar-symbol
-     (0 'font-lock-variable-name-face nil t))
+     (0 'font-lock-variable-name-face nil 'lax))
     ;; keywords TODO: alphabet doesn't match if on first line!
-    (,(concat "\\(?:\\Sw\\|^\\)"
-              (regexp-opt '("Alphabet" "Multichar_Symbols" "Sets" "Rules" "Definitions"
-                            "Diacritics" "Rule-variables" "where" "in" "matched" "END"
-                            ;; pmatch:
-                            "set" "need-separators" "off" "on"
-                            "Define" "regex" "EndTag" "Punct" "Whitespace" "LC" "RC" "@bin")
-                          'group)
-              "\\Sw")
-     (1 'font-lock-keyword-face nil t))
+    (,(concat "\\(?:\\Sw\\|^\\)" (regexp-opt hfst-mode-keywords 'group) "\\Sw")
+     (1 'font-lock-keyword-face nil 'lax))
     ;; todo: lexicon names always start with a capital letter, but can
     ;; you have eg. Æ? or just A-Z?
     ("\\(LEXICON\\) +\\(\\(\\sw\\|\\s_\\)+\\)" ; Root is special, note it in any way?
-     (1 'font-lock-keyword-face nil t)
-     (2 font-lock-constant-name-face))
+     (1 'font-lock-keyword-face t 'lax)
+     (2 'font-lock-constant-face t 'lax))
     ;; flag diacritics (these get warning because they should be in multichars):
     ("@\\sw\\.\\(\\(\\sw\\|\\s_\\)+\\)@"
-     (1 'font-lock-warning-face nil t))
+     (1 'font-lock-warning-face nil 'lax))
     ;; End symbol:
     ("\\(^\\|[^%]\\)\\(#\\)"
-     (2 'font-lock-warning-face nil t))
+     (2 'font-lock-warning-face nil 'lax))
     ;; escape symbol:
-    ("%." 0 'hfst-mode-font-lock-escaped-face nil t)
+    ("%." 0 'hfst-mode-font-lock-escaped-face nil 'lax)
     ;; operators:
-    (,(regexp-opt '("<=>" "<=" "=>" "/<=" "_" ";"
-                    "=" ":" ">"
-                    "\\" "~" "+" "?" "*" "-" "^"))
-     (0 'font-lock-function-name-face nil t)))
+    (,(regexp-opt hfst-mode-operators)
+     (0 'font-lock-function-name-face 'keep 'lax)))
   "Expressions to highlight in hfst-mode.")
 
 (defun hfst-mode-font ()
@@ -234,6 +252,7 @@ BOUND is as in `re-search-forward'."
   "Go to next xfst-in-lexc multichar symbol.
 BOUND is as in `re-search-forward'."
   ;; This function TODO! Needs to recognize that we are inside a "string" inside <brackets>
+  ;; maybe use match-anchored?
   (interactive)
   (let ((syms (hfst-mode-lexc-multichars)))
     (re-search-forward syms bound 'noerror)))
@@ -243,6 +262,8 @@ BOUND is as in `re-search-forward'."
 Should just return the cached value, but if UPDATE, force an
 update of the cache."
   (when update
+    ;; TODO: set the local cache only in the root-lexc, so we can
+    ;; re-use in all children?
     (let ((new (regexp-opt (hfst-mode-lexc-guess-multichars))))
       (when (not (equal new hfst-mode-multichars-cache))
         (make-local-variable 'hfst-mode-multichars-cache)
@@ -297,10 +318,12 @@ See `hfst-mode-ensure-idle-timer'.")
 (defun hfst-mode-ensure-idle-timer ()
   "Start `hfst-mode-idle-timer' if not running already."
   (unless hfst-mode-idle-timer
-    (hfst-mode-idle-timer)              ; run once first
+    ;; run once first, in an idle-timer since we have to let
+    ;; file-local variables get set:
+    (run-with-idle-timer 1 nil #'hfst-mode-idle-timer)
     (make-local-variable 'hfst-mode-idle-timer)
     (setq hfst-mode-idle-timer
-          (run-with-idle-timer 2 'repeat #'hfst-mode-idle-timer))))
+          (run-with-idle-timer hfst-mode-idle-delay 'repeat #'hfst-mode-idle-timer))))
 
 (defvar hfst-mode-disable-timers nil
   "Set to t to disable all timers.")
