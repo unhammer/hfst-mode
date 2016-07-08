@@ -123,7 +123,7 @@
 
 (defconst hfst-mode-font-lock-keywords
   `((hfst-mode-next-lexc-multichar-symbol
-     (1 'font-lock-variable-name-face nil t))
+     (0 'font-lock-variable-name-face nil t))
     ;; keywords TODO: alphabet doesn't match if on first line!
     (,(concat "\\(?:\\Sw\\|^\\)"
               (regexp-opt '("Alphabet" "Multichar_Symbols" "Sets" "Rules" "Definitions"
@@ -150,9 +150,8 @@
     ;; operators:
     (,(regexp-opt '("<=>" "<=" "=>" "/<=" "_" ";"
                     "=" ":" ">"
-                    "\\" "~" "+" "?" "*" "-" "^")
-                  'group)
-     (1 'font-lock-function-name-face nil t)))
+                    "\\" "~" "+" "?" "*" "-" "^"))
+     (0 'font-lock-function-name-face nil t)))
   "Expressions to highlight in hfst-mode.")
 
 (defun hfst-mode-font ()
@@ -244,7 +243,7 @@ BOUND is as in `re-search-forward'."
 Should just return the cached value, but if UPDATE, force an
 update of the cache."
   (when update
-    (let ((new (format "\\(%s\\)" (regexp-opt (hfst-mode-lexc-guess-multichars)))))
+    (let ((new (regexp-opt (hfst-mode-lexc-guess-multichars))))
       (when (not (equal new hfst-mode-multichars-cache))
         (make-local-variable 'hfst-mode-multichars-cache)
         (setq hfst-mode-multichars-cache new)
