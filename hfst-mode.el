@@ -161,8 +161,7 @@
   (setq font-lock-keywords-case-fold-search nil)
   (put major-mode 'font-lock-keywords-case-fold-search nil) ; For XEmacs.
   (make-local-variable 'font-lock-defaults)
-  (setq font-lock-defaults '(hfst-mode-font-lock-keywords nil nil))
-  (hfst-mode-lexc-guess-multichars))
+  (setq font-lock-defaults '(hfst-mode-font-lock-keywords nil nil)))
 
 ;;;###autoload
 (defun hfst-mode ()
@@ -299,7 +298,7 @@ See `hfst-mode-ensure-idle-timer'.")
 (defun hfst-mode-ensure-idle-timer ()
   "Start `hfst-mode-idle-timer' if not running already."
   (unless hfst-mode-idle-timer
-    (hfst-mode-idle-timer)
+    (hfst-mode-idle-timer)              ; run once first
     (make-local-variable 'hfst-mode-idle-timer)
     (setq hfst-mode-idle-timer
           (run-with-idle-timer 2 'repeat #'hfst-mode-idle-timer))))
